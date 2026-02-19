@@ -82,8 +82,64 @@ export function getOperadoras(
   );
 }
 
-export function getOperadora(registro: string): Promise<OperadoraDetail> {
-  return fetcher<OperadoraDetail>(`/api/v1/operadoras/${registro}`);
+export async function getOperadora(registro: string): Promise<OperadoraDetail> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const raw = await fetcher<any>(`/api/v1/operadoras/${registro}`);
+
+  // Transform idss_scores → idss_historico
+  const idss_historico = (raw.idss_scores || []).map((s: any) => ({
+    ano: s.ano_referencia,
+    nota_final: s.idss != null ? Number(s.idss) : 0,
+    idqs: s.idqs != null ? Number(s.idqs) : null,
+    idga: s.idga != null ? Number(s.idga) : null,
+    idsm: s.idsm != null ? Number(s.idsm) : null,
+    idgr: s.idgr != null ? Number(s.idgr) : null,
+  }));
+
+  // Transform igr_reclamacoes field names
+  const igr_reclamacoes = (raw.igr_reclamacoes || []).map((r: any) => {
+    const comp = r.competencia || "";
+    const year = parseInt(comp.substring(0, 4), 10) || 0;
+    const month = parseInt(comp.substring(4, 6), 10) || 1;
+    return {
+      ano: year,
+      trimestre: Math.ceil(month / 3),
+      indice: r.indice_reclamacao != null ? Number(r.indice_reclamacao) : 0,
+      classificacao: r.classificacao_mes != null ? String(r.classificacao_mes) : null,
+      total_reclamacoes: r.reclamacoes ?? null,
+      beneficiarios_periodo: r.beneficiarios ?? null,
+    };
+  });
+
+  // Transform reajustes field names
+  const reajustes = (raw.reajustes || []).map((r: any) => ({
+    ano: parseInt(r.ciclo, 10) || 0,
+    percentual: r.pct_unico != null ? Number(r.pct_unico) : 0,
+    tipo_plano: r.tipo_agrupamento || "geral",
+  }));
+
+  return {
+    id: raw.id,
+    registro_ans: raw.registro_ans,
+    razao_social: raw.razao_social,
+    nome_fantasia: raw.nome_fantasia ?? null,
+    cnpj: raw.cnpj ?? "",
+    modalidade: raw.modalidade ?? "",
+    uf: raw.uf ?? "",
+    cidade: raw.cidade ?? null,
+    porte: null,
+    beneficiarios: raw.beneficiarios ?? null,
+    idss_score: raw.idss_score ?? raw.latest_idss ?? null,
+    endereco: null,
+    telefone: raw.telefone ?? null,
+    email: raw.email ?? null,
+    site: null,
+    data_registro: raw.data_registro_ans ?? null,
+    idss_historico,
+    igr_reclamacoes,
+    reajustes,
+    total_planos: 0,
+  };
 }
 
 // --- Planos ---

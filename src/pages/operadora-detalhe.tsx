@@ -58,7 +58,7 @@ export default function OperadoraDetalhe() {
       })),
     ])
       .then(([op, planosRes]) => {
-        setOperadora(op);
+        setOperadora({ ...op, total_planos: planosRes.total });
         setPlanos(planosRes.items);
       })
       .catch((err) => setError(err.message || "Erro ao carregar operadora"))
