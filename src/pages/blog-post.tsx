@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router";
 import { ArrowLeft, Calendar, Clock, Tag, User } from "lucide-react";
 import SEO from "@/components/seo";
+import ShareButton from "@/components/share-button";
 
 interface BlogPostFull {
   id: number;
@@ -209,6 +210,11 @@ export default function BlogPost() {
           <Clock className="h-4 w-4" />
           {readTime} min de leitura
         </span>
+        <ShareButton
+          variant="icon"
+          url={`/blog/${post.slug}`}
+          title={post.title}
+        />
       </div>
 
       {/* Tags */}

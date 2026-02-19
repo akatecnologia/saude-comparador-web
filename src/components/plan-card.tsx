@@ -23,6 +23,7 @@ import { MetricLabel, Tooltip } from "@/components/tooltip";
 import { useLead } from "@/hooks/use-lead";
 import PriceLevelBadge from "@/components/price-level-badge";
 import LeadCaptureModal from "@/components/lead-capture-modal";
+import ShareButton from "@/components/share-button";
 
 interface PlanCardProps {
   plano: Plano;
@@ -56,7 +57,7 @@ export default function PlanCard({
             {initials}
           </div>
 
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <h3 className="font-semibold text-gray-900 text-sm leading-snug line-clamp-2">
               {plano.nome}
             </h3>
@@ -65,6 +66,12 @@ export default function PlanCard({
             </p>
             <p className="text-xs text-gray-400">ANS {plano.operadora_registro_ans}</p>
           </div>
+
+          <ShareButton
+            variant="icon"
+            url={`/planos/${plano.id}`}
+            title={plano.nome}
+          />
         </div>
 
         {/* Tags */}

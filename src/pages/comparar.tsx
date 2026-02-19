@@ -29,6 +29,7 @@ import {
 import { getPrecos } from "@/lib/api-client";
 import { useLead } from "@/hooks/use-lead";
 import LeadCaptureModal from "@/components/lead-capture-modal";
+import ShareButton from "@/components/share-button";
 import type { PlanoDetail, Plano, VcmFaixaItem } from "@/types";
 
 interface ComparisonRow {
@@ -256,14 +257,23 @@ export default function Comparar() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <GitCompare className="h-6 w-6 text-primary" />
-          Comparar Planos
-        </h1>
-        <p className="text-gray-500 text-sm mt-1">
-          Compare até 4 planos lado a lado
-        </p>
+      <div className="mb-6 flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <GitCompare className="h-6 w-6 text-primary" />
+            Comparar Planos
+          </h1>
+          <p className="text-gray-500 text-sm mt-1">
+            Compare até 4 planos lado a lado
+          </p>
+        </div>
+        {selectedIds.length > 0 && (
+          <ShareButton
+            variant="button"
+            url={`/comparar?ids=${selectedIds.join(",")}`}
+            title="Comparação de planos no SaúdeComparador"
+          />
+        )}
       </div>
 
       {/* Plan selector header */}

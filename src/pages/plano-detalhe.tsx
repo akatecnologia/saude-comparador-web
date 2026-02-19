@@ -41,6 +41,7 @@ import { useLead } from "@/hooks/use-lead";
 import { Tooltip, InfoTip } from "@/components/tooltip";
 import PriceLevelBadge from "@/components/price-level-badge";
 import LeadCaptureModal from "@/components/lead-capture-modal";
+import ShareButton from "@/components/share-button";
 import type { PlanoDetail } from "@/types";
 
 export default function PlanoDetalhe() {
@@ -180,6 +181,11 @@ export default function PlanoDetalhe() {
               <FileText className="h-4 w-4" />
               Solicitar cotação
             </Link>
+            <ShareButton
+              variant="button"
+              url={`/planos/${plano.id}`}
+              title={`${plano.nome} — ${plano.operadora_nome}`}
+            />
           </div>
         </div>
 
