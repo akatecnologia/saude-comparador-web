@@ -166,7 +166,7 @@ export default function PlanoDetalhe() {
             </p>
           </div>
 
-          <div className="flex gap-2 shrink-0">
+          <div className="flex flex-wrap gap-2 shrink-0">
             <Link
               to={`/comparar?ids=${plano.id}`}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
