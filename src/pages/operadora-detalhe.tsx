@@ -24,6 +24,7 @@ import {
 import { getOperadora, buscarPlanos } from "@/lib/api-client";
 import ReajusteChart from "@/components/reajuste-chart";
 import PlanCard from "@/components/plan-card";
+import ShareButton from "@/components/share-button";
 import {
   cn,
   getIdssBadge,
@@ -158,6 +159,13 @@ export default function OperadoraDetalhe() {
                 {operadora.modalidade}
               </span>
             </div>
+          </div>
+          <div className="shrink-0">
+            <ShareButton
+              variant="button"
+              url={`/operadoras/${operadora.registro_ans}`}
+              title={operadora.nome_fantasia || operadora.razao_social}
+            />
           </div>
         </div>
 

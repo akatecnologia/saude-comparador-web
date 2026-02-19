@@ -45,7 +45,9 @@ export default function ShareButton({
 
     switch (method) {
       case "whatsapp": {
-        const text = `${title} ${shareUrl}`;
+        const text = description
+          ? `${title}\n${description}\n${shareUrl}`
+          : `${title} ${shareUrl}`;
         window.open(
           `https://wa.me/?text=${encodeURIComponent(text)}`,
           "_blank",
