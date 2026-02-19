@@ -333,7 +333,7 @@ export default function Planos() {
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 overflow-x-hidden">
       <SEO
         title="Buscar planos de saúde"
         description="Encontre o plano de saúde ideal comparando dados oficiais da ANS. Filtre por estado, tipo de contratação, segmentação e mais."
@@ -442,7 +442,7 @@ export default function Planos() {
         {/* Results area */}
         <div className="flex-1 min-w-0">
           {/* Results header: count + acomodação toggle + sort + mobile filter toggle */}
-          <div className="flex items-center justify-between gap-2 mb-4 flex-wrap">
+          <div className="flex flex-wrap items-center gap-2 mb-4">
             <div className="flex items-center gap-3">
               {/* Mobile filter button */}
               <button
@@ -473,7 +473,7 @@ export default function Planos() {
               )}
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 ml-auto">
               {/* Acomodação toggle */}
               <div className="inline-flex gap-1.5">
                 <button
@@ -508,7 +508,7 @@ export default function Planos() {
                 <select
                   value={ordem}
                   onChange={(e) => updateParam("ordem", e.target.value)}
-                  className="px-2 py-1.5 rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="px-2 py-1.5 rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent max-w-[180px]"
                 >
                   {ORDEM_OPTIONS.map((o) => (
                     <option key={o.value} value={o.value}>
