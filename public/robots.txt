@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /assistente
+
+Sitemap: https://saudecomparador.com.br/sitemap.xml
