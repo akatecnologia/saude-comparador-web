@@ -32,6 +32,7 @@ export default function App() {
 
   useEffect(() => {
     setMobileOpen(false);
+    window.scrollTo(0, 0);
   }, [location.pathname]);
 
   useEffect(() => {
