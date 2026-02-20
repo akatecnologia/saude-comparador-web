@@ -23,7 +23,7 @@ export default function MunicipioAutocomplete({
 
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // Sync input text when external value changes (e.g. cleared by parent)
   useEffect(() => {
@@ -120,8 +120,11 @@ export default function MunicipioAutocomplete({
         break;
       case "Enter":
         e.preventDefault();
-        if (activeIndex >= 0 && activeIndex < options.length) {
-          selectOption(options[activeIndex]);
+        {
+          const opt = options[activeIndex];
+          if (activeIndex >= 0 && opt) {
+            selectOption(opt);
+          }
         }
         break;
       case "Escape":
