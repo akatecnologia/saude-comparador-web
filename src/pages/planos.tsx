@@ -55,26 +55,32 @@ const FILTER_OPTIONS: Record<FilterKey, readonly { value: string; label: string 
 export default function Planos() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [detectedUf, saveUf] = useUserUf();
+  const [initialized, setInitialized] = useState(false);
 
-  // Restore saved filters on first load when URL has no filters
-  const restoredRef = useRef(false);
-  if (!restoredRef.current) {
-    restoredRef.current = true;
-    // If URL has no filter params, restore from localStorage
-    const hasFilters = Array.from(searchParams.keys()).some((k) => k !== "");
-    if (!hasFilters) {
-      const saved = getSavedPlanoFilters();
-      const keys = Object.keys(saved) as (keyof typeof saved)[];
-      if (keys.length > 0) {
-        const next = new URLSearchParams(searchParams);
-        for (const key of keys) {
-          const val = saved[key];
-          if (val) next.set(key, val);
-        }
-        setSearchParams(next, { replace: true });
-      }
+  // Restore saved filters on first load when URL has no filters.
+  // Flow: mount → URL empty → setSearchParams(saved) → re-render → URL has params → setInitialized(true)
+  // The fetch effect is gated on `initialized` so no wasted request with empty filters.
+  useEffect(() => {
+    if (initialized) return;
+    const hasUrlFilters = Array.from(searchParams.keys()).length > 0;
+    if (hasUrlFilters) {
+      setInitialized(true);
+      return;
     }
-  }
+    const saved = getSavedPlanoFilters();
+    const entries = Object.entries(saved).filter(([, v]) => v);
+    if (entries.length > 0) {
+      const next = new URLSearchParams();
+      for (const [k, v] of entries) {
+        if (v) next.set(k, v);
+      }
+      setSearchParams(next, { replace: true });
+      // Don't set initialized yet — wait for re-render with updated searchParams
+      return;
+    }
+    // No saved filters, proceed with defaults
+    setInitialized(true);
+  }, [initialized, searchParams, setSearchParams]);
 
   // Infinite scroll state
   const [items, setItems] = useState<Plano[]>([]);
@@ -158,8 +164,10 @@ export default function Planos() {
     [searchParams, setSearchParams],
   );
 
-  // Reset and load page 1 whenever filters change
+  // Reset and load page 1 whenever filters change (only after initialization)
   useEffect(() => {
+    if (!initialized) return;
+
     setItems([]);
     setPage(1);
     setHasMore(true);
@@ -191,7 +199,7 @@ export default function Planos() {
         setHasMore(false);
       })
       .finally(() => setLoading(false));
-  }, [filterKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [filterKey, initialized]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Load next page (called by "Carregar mais" button)
   function loadMore() {
