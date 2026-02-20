@@ -5,6 +5,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/** Strip accents and lowercase for accent+case insensitive comparison. */
+export function normalizeText(text: string): string {
+  return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
 export function formatCurrency(value: number | null | undefined): string {
   if (value == null) return "N/D";
   return new Intl.NumberFormat("pt-BR", {

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { MapPin, Loader2, X } from "lucide-react";
 import { buscarMunicipios } from "@/lib/api-client";
-import { cn } from "@/lib/utils";
+import { cn, normalizeText } from "@/lib/utils";
 import type { MunicipioOption } from "@/types";
 
 interface MunicipioAutocompleteProps {
@@ -73,7 +73,7 @@ export default function MunicipioAutocomplete({
   function handleInputChange(text: string) {
     setInputText(text);
     // If user clears or edits text and previously had a selection, clear value
-    if (value && text.toLowerCase() !== value.toLowerCase()) {
+    if (value && normalizeText(text) !== normalizeText(value)) {
       onChange("");
     }
     fetchOptions(text);
