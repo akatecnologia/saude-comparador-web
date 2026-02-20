@@ -115,6 +115,35 @@ export function saveFaixaEtaria(value: string) {
   } catch { /* ignore */ }
 }
 
+// --- Planos filters persistence ---
+const FILTERS_STORAGE_KEY = "saude_planos_filters";
+
+const PERSISTED_FILTER_KEYS = [
+  "q", "uf", "cidade", "tipo_contratacao", "segmentacao",
+  "acomodacao", "abrangencia", "faixa_etaria", "ordem",
+] as const;
+
+export type PlanoFilters = Partial<Record<(typeof PERSISTED_FILTER_KEYS)[number], string>>;
+
+export function getSavedPlanoFilters(): PlanoFilters {
+  try {
+    const raw = localStorage.getItem(FILTERS_STORAGE_KEY);
+    if (!raw) return {};
+    return JSON.parse(raw) as PlanoFilters;
+  } catch { return {}; }
+}
+
+export function savePlanoFilters(params: URLSearchParams) {
+  try {
+    const obj: PlanoFilters = {};
+    for (const key of PERSISTED_FILTER_KEYS) {
+      const val = params.get(key);
+      if (val) obj[key] = val;
+    }
+    localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(obj));
+  } catch { /* ignore */ }
+}
+
 export const TIPOS_CONTRATACAO = [
   { value: "Individual ou familiar", label: "Individual ou Familiar" },
   { value: "Coletivo empresarial", label: "Coletivo Empresarial" },

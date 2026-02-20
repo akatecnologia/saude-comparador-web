@@ -73,7 +73,7 @@ export default function MunicipioAutocomplete({
   function handleInputChange(text: string) {
     setInputText(text);
     // If user clears or edits text and previously had a selection, clear value
-    if (value && text !== value) {
+    if (value && text.toLowerCase() !== value.toLowerCase()) {
       onChange("");
     }
     fetchOptions(text);

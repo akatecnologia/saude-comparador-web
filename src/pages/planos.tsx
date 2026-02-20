@@ -13,6 +13,8 @@ import {
   FAIXAS_ETARIAS,
   getSavedFaixaEtaria,
   saveFaixaEtaria,
+  getSavedPlanoFilters,
+  savePlanoFilters,
   cn,
 } from "@/lib/utils";
 import { useUserUf } from "@/hooks/use-user-uf";
@@ -53,6 +55,26 @@ const FILTER_OPTIONS: Record<FilterKey, readonly { value: string; label: string 
 export default function Planos() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [detectedUf, saveUf] = useUserUf();
+
+  // Restore saved filters on first load when URL has no filters
+  const restoredRef = useRef(false);
+  if (!restoredRef.current) {
+    restoredRef.current = true;
+    // If URL has no filter params, restore from localStorage
+    const hasFilters = Array.from(searchParams.keys()).some((k) => k !== "");
+    if (!hasFilters) {
+      const saved = getSavedPlanoFilters();
+      const keys = Object.keys(saved) as (keyof typeof saved)[];
+      if (keys.length > 0) {
+        const next = new URLSearchParams(searchParams);
+        for (const key of keys) {
+          const val = saved[key];
+          if (val) next.set(key, val);
+        }
+        setSearchParams(next, { replace: true });
+      }
+    }
+  }
 
   // Infinite scroll state
   const [items, setItems] = useState<Plano[]>([]);
@@ -107,6 +129,9 @@ export default function Planos() {
 
   // Persist faixa_etaria to localStorage when changed
   useEffect(() => { saveFaixaEtaria(faixa_etaria); }, [faixa_etaria]);
+
+  // Persist all filters to localStorage when any filter changes
+  useEffect(() => { savePlanoFilters(searchParams); }, [searchParams]);
 
   // Build a "filter key" — when this changes, we reset to page 1
   const filterKey = `${q}|${uf}|${cidade}|${tipo_contratacao}|${segmentacao}|${acomodacao}|${abrangencia}|${faixa_etaria}|${ordem}`;
