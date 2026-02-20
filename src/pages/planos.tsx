@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams } from "react-router";
-import { Search, SlidersHorizontal, Loader2, X, ChevronDown } from "lucide-react";
+import { Search, SlidersHorizontal, Loader2, X, ChevronDown, MapPin } from "lucide-react";
 import SEO from "@/components/seo";
 import PlanCard from "@/components/plan-card";
 import { buscarPlanos } from "@/lib/api-client";
@@ -16,6 +16,7 @@ import {
   cn,
 } from "@/lib/utils";
 import { useUserUf } from "@/hooks/use-user-uf";
+import MunicipioAutocomplete from "@/components/municipio-autocomplete";
 import type { Plano } from "@/types";
 
 const PAGE_SIZE = 24;
@@ -64,7 +65,7 @@ export default function Planos() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [compareList, setCompareList] = useState<number[]>([]);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set(FILTER_SECTIONS.map((s) => s.key)),
+    new Set([...FILTER_SECTIONS.map((s) => s.key), "cidade"]),
   );
 
   // Read current params
@@ -96,6 +97,7 @@ export default function Planos() {
 
   const q = qParam;
   const uf = searchParams.get("uf") ?? detectedUf;
+  const cidade = searchParams.get("cidade") || "";
   const tipo_contratacao = searchParams.get("tipo_contratacao") || "";
   const segmentacao = searchParams.get("segmentacao") || "";
   const acomodacao = searchParams.get("acomodacao") || "";
@@ -107,7 +109,7 @@ export default function Planos() {
   useEffect(() => { saveFaixaEtaria(faixa_etaria); }, [faixa_etaria]);
 
   // Build a "filter key" — when this changes, we reset to page 1
-  const filterKey = `${q}|${uf}|${tipo_contratacao}|${segmentacao}|${acomodacao}|${abrangencia}|${faixa_etaria}|${ordem}`;
+  const filterKey = `${q}|${uf}|${cidade}|${tipo_contratacao}|${segmentacao}|${acomodacao}|${abrangencia}|${faixa_etaria}|${ordem}`;
 
   const filterValues: Record<FilterKey, string> = {
     uf,
@@ -142,6 +144,7 @@ export default function Planos() {
     buscarPlanos({
       q: q || undefined,
       uf: uf || undefined,
+      cidade: cidade || undefined,
       tipo_contratacao: tipo_contratacao || undefined,
       segmentacao: segmentacao || undefined,
       acomodacao: acomodacao || undefined,
@@ -174,6 +177,7 @@ export default function Planos() {
     buscarPlanos({
       q: q || undefined,
       uf: uf || undefined,
+      cidade: cidade || undefined,
       tipo_contratacao: tipo_contratacao || undefined,
       segmentacao: segmentacao || undefined,
       acomodacao: acomodacao || undefined,
@@ -205,6 +209,7 @@ export default function Planos() {
 
   function clearFilters() {
     setSearchParams(q ? { q } : {});
+    // cidade is cleared along with other params since setSearchParams replaces all
   }
 
   function toggleSection(key: string) {
@@ -217,7 +222,17 @@ export default function Planos() {
   }
 
   function handleFilterChange(key: FilterKey, value: string) {
-    if (key === "uf") saveUf(value);
+    if (key === "uf") {
+      saveUf(value);
+      // Clear cidade when UF changes (municipio may not exist in the new state)
+      if (cidade) {
+        const next = new URLSearchParams(searchParams);
+        if (value) { next.set("uf", value); } else { next.delete("uf"); }
+        next.delete("cidade");
+        setSearchParams(next);
+        return;
+      }
+    }
     updateParam(key, value);
   }
 
@@ -251,6 +266,40 @@ export default function Planos() {
     </div>
   );
 
+  /* Municipio autocomplete section (shared between desktop + mobile) */
+  const cidadeSection = (
+    <div className="border-b border-gray-100">
+      <button
+        type="button"
+        onClick={() => toggleSection("cidade")}
+        className="flex items-center justify-between w-full py-3 px-1 text-sm font-semibold text-gray-800 hover:text-primary transition-colors"
+      >
+        <span className="flex items-center gap-2">
+          <MapPin className="h-3.5 w-3.5" />
+          Municipio
+          {cidade && (
+            <span className="w-2 h-2 rounded-full bg-primary" />
+          )}
+        </span>
+        <ChevronDown
+          className={cn(
+            "h-4 w-4 text-gray-400 transition-transform",
+            expandedSections.has("cidade") && "rotate-180",
+          )}
+        />
+      </button>
+      {expandedSections.has("cidade") && (
+        <div className="pb-3 px-1">
+          <MunicipioAutocomplete
+            value={cidade}
+            uf={uf || undefined}
+            onChange={(value) => updateParam("cidade", value)}
+          />
+        </div>
+      )}
+    </div>
+  );
+
   /* Shared filter sidebar content */
   const filterSidebar = (
     <div className="space-y-1">
@@ -261,71 +310,75 @@ export default function Planos() {
         const useSelect = section.key === "uf";
 
         return (
-          <div key={section.key} className="border-b border-gray-100 last:border-0">
-            <button
-              type="button"
-              onClick={() => toggleSection(section.key)}
-              className="flex items-center justify-between w-full py-3 px-1 text-sm font-semibold text-gray-800 hover:text-primary transition-colors"
-            >
-              <span className="flex items-center gap-2">
-                {section.label}
-                {currentValue && (
-                  <span className="w-2 h-2 rounded-full bg-primary" />
-                )}
-              </span>
-              <ChevronDown
-                className={cn(
-                  "h-4 w-4 text-gray-400 transition-transform",
-                  isExpanded && "rotate-180",
-                )}
-              />
-            </button>
-            {isExpanded && useSelect ? (
-              <div className="pb-3 px-1">
-                <select
-                  value={currentValue}
-                  onChange={(e) => handleFilterChange(section.key, e.target.value)}
-                  className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                >
-                  <option value="">Todos os estados</option>
-                  {options.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            ) : isExpanded && (
-              <div className="pb-3 space-y-0.5">
-                <button
-                  type="button"
-                  onClick={() => handleFilterChange(section.key, "")}
-                  className={cn(
-                    "block w-full text-left px-2 py-1.5 rounded-md text-sm transition-colors",
-                    !currentValue
-                      ? "bg-primary-light text-primary font-medium"
-                      : "text-gray-600 hover:bg-gray-50",
+          <div key={section.key}>
+            <div className="border-b border-gray-100">
+              <button
+                type="button"
+                onClick={() => toggleSection(section.key)}
+                className="flex items-center justify-between w-full py-3 px-1 text-sm font-semibold text-gray-800 hover:text-primary transition-colors"
+              >
+                <span className="flex items-center gap-2">
+                  {section.label}
+                  {currentValue && (
+                    <span className="w-2 h-2 rounded-full bg-primary" />
                   )}
-                >
-                  Todos
-                </button>
-                {options.map((opt) => (
+                </span>
+                <ChevronDown
+                  className={cn(
+                    "h-4 w-4 text-gray-400 transition-transform",
+                    isExpanded && "rotate-180",
+                  )}
+                />
+              </button>
+              {isExpanded && useSelect ? (
+                <div className="pb-3 px-1">
+                  <select
+                    value={currentValue}
+                    onChange={(e) => handleFilterChange(section.key, e.target.value)}
+                    className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  >
+                    <option value="">Todos os estados</option>
+                    {options.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : isExpanded && (
+                <div className="pb-3 space-y-0.5">
                   <button
-                    key={opt.value}
                     type="button"
-                    onClick={() => handleFilterChange(section.key, opt.value)}
+                    onClick={() => handleFilterChange(section.key, "")}
                     className={cn(
                       "block w-full text-left px-2 py-1.5 rounded-md text-sm transition-colors",
-                      currentValue === opt.value
+                      !currentValue
                         ? "bg-primary-light text-primary font-medium"
                         : "text-gray-600 hover:bg-gray-50",
                     )}
                   >
-                    {opt.label}
+                    Todos
                   </button>
-                ))}
-              </div>
-            )}
+                  {options.map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => handleFilterChange(section.key, opt.value)}
+                      className={cn(
+                        "block w-full text-left px-2 py-1.5 rounded-md text-sm transition-colors",
+                        currentValue === opt.value
+                          ? "bg-primary-light text-primary font-medium"
+                          : "text-gray-600 hover:bg-gray-50",
+                      )}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            {/* Insert municipio section after Estado */}
+            {section.key === "uf" && cidadeSection}
           </div>
         );
       })}
@@ -362,7 +415,7 @@ export default function Planos() {
       </div>
 
       {/* Active filter chips */}
-      {activeFilters.length > 0 && (
+      {(activeFilters.length > 0 || cidade) && (
         <div className="flex flex-wrap items-center gap-2 mb-4">
           {activeFilters.map((f) => {
             const value = filterValues[f.key];
@@ -379,6 +432,17 @@ export default function Planos() {
               </button>
             );
           })}
+          {cidade && (
+            <button
+              type="button"
+              onClick={() => updateParam("cidade", "")}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-100 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors group"
+            >
+              <MapPin className="h-3.5 w-3.5" />
+              {cidade}
+              <X className="h-3.5 w-3.5 text-gray-400 group-hover:text-red-500" />
+            </button>
+          )}
           <button
             type="button"
             onClick={clearFilters}
@@ -424,7 +488,7 @@ export default function Planos() {
             <div className="bg-white rounded-xl border border-gray-200 p-4">
               <div className="flex items-center justify-between mb-2">
                 <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Filtros</h2>
-                {activeFilters.length > 0 && (
+                {(activeFilters.length > 0 || cidade) && (
                   <button
                     type="button"
                     onClick={clearFilters}
@@ -450,16 +514,16 @@ export default function Planos() {
                 onClick={() => setMobileFiltersOpen(true)}
                 className={cn(
                   "lg:hidden inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border text-sm font-medium transition-colors",
-                  activeFilters.length > 0
+                  (activeFilters.length > 0 || cidade)
                     ? "bg-primary-light text-primary border-primary/30"
                     : "bg-white text-gray-600 border-gray-200",
                 )}
               >
                 <SlidersHorizontal className="h-4 w-4" />
                 Filtros
-                {activeFilters.length > 0 && (
+                {(activeFilters.length > 0 || cidade) && (
                   <span className="w-5 h-5 rounded-full bg-primary text-white text-[10px] flex items-center justify-center font-bold">
-                    {activeFilters.length}
+                    {activeFilters.length + (cidade ? 1 : 0)}
                   </span>
                 )}
               </button>
@@ -592,7 +656,7 @@ export default function Planos() {
               <p className="text-gray-500 text-sm">
                 Tente ajustar os filtros ou termos de busca.
               </p>
-              {activeFilters.length > 0 && (
+              {(activeFilters.length > 0 || cidade) && (
                 <button
                   type="button"
                   onClick={clearFilters}
@@ -638,7 +702,7 @@ export default function Planos() {
               {filterSidebar}
             </div>
             <div className="border-t border-gray-200 px-4 py-3 flex gap-2">
-              {activeFilters.length > 0 && (
+              {(activeFilters.length > 0 || cidade) && (
                 <button
                   type="button"
                   onClick={() => { clearFilters(); setMobileFiltersOpen(false); }}

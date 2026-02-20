@@ -181,6 +181,12 @@ export interface ChatMessage {
   content: string;
 }
 
+export interface MunicipioOption {
+  id: number;
+  nome: string;
+  uf: string;
+}
+
 export interface BuscarPlanosParams {
   q?: string;
   uf?: string;

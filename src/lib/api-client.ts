@@ -16,6 +16,7 @@ import type {
   VcmResponse,
   VcmHistoricoResponse,
   QualidadeResponse,
+  MunicipioOption,
 } from "@/types";
 
 const BASE_URL = import.meta.env.VITE_API_URL || "";
@@ -160,6 +161,16 @@ export async function compararPlanos(ids: number[]): Promise<PlanoDetail[]> {
     `/api/v1/planos/comparar${buildQuery({ ids: ids.join(",") })}`,
   );
   return data.planos;
+}
+
+// --- Municipios ---
+export function buscarMunicipios(params: {
+  q: string;
+  uf?: string;
+}): Promise<MunicipioOption[]> {
+  return fetcher<MunicipioOption[]>(
+    `/api/v1/municipios/autocomplete${buildQuery(params)}`,
+  );
 }
 
 // --- Faixas de Preco ---
