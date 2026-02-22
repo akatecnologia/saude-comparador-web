@@ -69,7 +69,7 @@ export default function PlanoDetalhe() {
 
   if (loading) {
     return (
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-hidden">
         <div className="skeleton h-6 w-32 mb-6" />
         <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
           <div className="flex gap-4 mb-4">
@@ -93,7 +93,7 @@ export default function PlanoDetalhe() {
 
   if (error || !plano) {
     return (
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-hidden">
         <Link
           to="/planos"
           className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-6"
@@ -117,7 +117,7 @@ export default function PlanoDetalhe() {
   const initials = getInitials(plano.operadora_nome || "");
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-hidden">
       <Link
         to="/planos"
         className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-6"
@@ -141,7 +141,7 @@ export default function PlanoDetalhe() {
       )}
 
       {/* Plan header */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6 animate-fade-in">
+      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6 animate-fade-in overflow-hidden">
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div
             className={cn(
@@ -379,9 +379,9 @@ export default function PlanoDetalhe() {
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid lg:grid-cols-3 gap-6 min-w-0">
         {/* Coverage details */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6 min-w-0">
           <div className="bg-white rounded-xl border border-gray-200 p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">
               Detalhes da cobertura
@@ -494,7 +494,7 @@ export default function PlanoDetalhe() {
           )}
           {/* VCM Prices by age bracket */}
           {vcmFaixas.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <div className="bg-white rounded-xl border border-gray-200 p-6 overflow-hidden">
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 mb-1">
                 <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                   <DollarSign className="h-5 w-5 text-green-600 shrink-0" />
@@ -717,7 +717,7 @@ export default function PlanoDetalhe() {
 
           {/* IGR complaint history */}
           {plano.igr_historico && plano.igr_historico.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <div className="bg-white rounded-xl border border-gray-200 p-6 overflow-hidden">
               <h2 className="text-lg font-bold text-gray-900 mb-1 flex items-center flex-wrap gap-2">
                 <Phone className="h-5 w-5 text-orange-600 shrink-0" />
                 Histórico de Reclamações (IGR)
@@ -759,7 +759,7 @@ export default function PlanoDetalhe() {
 
           {/* Reajuste history */}
           {plano.reajustes_historico && plano.reajustes_historico.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <div className="bg-white rounded-xl border border-gray-200 p-6 overflow-hidden">
               <h2 className="text-lg font-bold text-gray-900 mb-1 flex items-center flex-wrap gap-2">
                 <DollarSign className="h-5 w-5 text-amber-600 shrink-0" />
                 Histórico de Reajustes
@@ -814,7 +814,7 @@ export default function PlanoDetalhe() {
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-6">
+        <div className="space-y-6 min-w-0">
           {/* CTA cotação */}
           <div className="bg-white rounded-xl border border-gray-200 p-6">
             <h3 className="text-sm font-semibold text-gray-700 mb-3">

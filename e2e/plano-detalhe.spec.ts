@@ -33,11 +33,42 @@ test.describe("Plano Detalhe — Responsividade", () => {
   });
 
   test("no horizontal overflow on the page", async ({ page }) => {
-    await page.waitForTimeout(500);
+    // Wait for dynamic content (VCM table, quality metrics) to render
+    await page.waitForTimeout(2000);
+    // Also wait for any tables or heavy sections
+    const tables = page.locator("table");
+    if ((await tables.count()) > 0) {
+      await tables.first().waitFor({ state: "visible", timeout: 10_000 }).catch(() => {});
+    }
+
     const overflowX = await page.evaluate(() =>
       document.documentElement.scrollWidth > document.documentElement.clientWidth
     );
     expect(overflowX).toBe(false);
+  });
+
+  test("no element overflows the viewport width", async ({ page }) => {
+    const viewport = page.viewportSize()!;
+    // Wait for all dynamic content to load
+    await page.waitForTimeout(2000);
+
+    // Check all major content sections for overflow
+    const sections = page.locator(".bg-white.rounded-xl");
+    const count = await sections.count();
+
+    for (let i = 0; i < count; i++) {
+      const section = sections.nth(i);
+      if (await section.isVisible()) {
+        const box = await section.boundingBox();
+        if (box) {
+          expect(
+            box.x + box.width,
+            `Section ${i} overflows viewport (right edge: ${box.x + box.width}, viewport: ${viewport.width})`,
+          ).toBeLessThanOrEqual(viewport.width + 2);
+          expect(box.x, `Section ${i} has negative x offset`).toBeGreaterThanOrEqual(-2);
+        }
+      }
+    }
   });
 
   test("header buttons are visible", async ({ page }) => {
