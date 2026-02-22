@@ -80,7 +80,7 @@ export default function PlanoDetalhe() {
               <div className="skeleton h-3 w-1/4" />
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             <div className="skeleton h-20 rounded-lg" />
             <div className="skeleton h-20 rounded-lg" />
             <div className="skeleton h-20 rounded-lg" />
@@ -495,14 +495,14 @@ export default function PlanoDetalhe() {
           {/* VCM Prices by age bracket */}
           {vcmFaixas.length > 0 && (
             <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <div className="flex items-start justify-between mb-1">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 mb-1">
                 <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                  <DollarSign className="h-5 w-5 text-green-600" />
+                  <DollarSign className="h-5 w-5 text-green-600 shrink-0" />
                   Mensalidades por faixa etária
                   <InfoTip text="Valor Comercial da Mensalidade (VCM) — o preço base registrado pela operadora na ANS para cada faixa de idade. Pode haver variação conforme negociação e coparticipação." />
                 </h2>
                 {vcmFaixas[0]?.mes_referencia && (
-                  <span className="text-[10px] text-gray-400 mt-1.5">
+                  <span className="text-[10px] text-gray-400 sm:mt-1.5 shrink-0">
                     ref. {formatCompetencia(vcmFaixas[0].mes_referencia)}
                   </span>
                 )}
@@ -584,8 +584,8 @@ export default function PlanoDetalhe() {
 
           {/* Quality metrics */}
           <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-1 flex items-center gap-2">
-              <Award className="h-5 w-5 text-blue-600" />
+            <h2 className="text-lg font-bold text-gray-900 mb-1 flex items-center flex-wrap gap-2">
+              <Award className="h-5 w-5 text-blue-600 shrink-0" />
               Indicadores de qualidade
               <InfoTip text="Indicadores regulatórios da ANS que avaliam a operadora em diversas dimensões: saúde financeira, atendimento, reclamações e certificações." />
             </h2>
@@ -594,24 +594,24 @@ export default function PlanoDetalhe() {
             </p>
             <div className="space-y-3">
               {plano.classificacao_prudencial && (
-                <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
-                  <div className="flex items-center gap-1">
+                <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-lg bg-gray-50">
+                  <div className="flex items-center gap-1 min-w-0">
                     <span className="text-sm text-gray-600">Classificação Prudencial</span>
                     <InfoTip text="Avalia a saúde financeira da operadora. S1 = situação mais sólida, S2 = boa, S3 e S4 = requerem atenção." />
                   </div>
-                  <span className="text-sm font-semibold text-gray-900">
+                  <span className="text-sm font-semibold text-gray-900 shrink-0">
                     {plano.classificacao_prudencial}
                   </span>
                 </div>
               )}
               {plano.taxa_resolutividade != null && (
-                <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
-                  <div className="flex items-center gap-1">
+                <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-lg bg-gray-50">
+                  <div className="flex items-center gap-1 min-w-0">
                     <span className="text-sm text-gray-600">Taxa de Resolutividade</span>
                     <InfoTip text="Percentual de demandas dos consumidores resolvidas diretamente pela operadora, sem necessidade de intervenção da ANS. Quanto maior, melhor." />
                   </div>
                   <span className={cn(
-                    "text-sm font-semibold",
+                    "text-sm font-semibold shrink-0",
                     Number(plano.taxa_resolutividade) >= 80 ? "text-green-700" : "text-amber-700",
                   )}>
                     {Number(plano.taxa_resolutividade).toFixed(1)}%
@@ -619,33 +619,33 @@ export default function PlanoDetalhe() {
                 </div>
               )}
               {plano.garantia_atendimento && (
-                <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
-                  <div className="flex items-center gap-1">
+                <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-lg bg-gray-50">
+                  <div className="flex items-center gap-1 min-w-0">
                     <span className="text-sm text-gray-600">Garantia de Atendimento</span>
                     <InfoTip text="Monitoramento da ANS sobre os tempos de espera. Faixa 0 = melhor (sem atraso), faixas maiores indicam mais dificuldade de agendamento." />
                   </div>
-                  <span className="text-sm font-semibold text-gray-900">
+                  <span className="text-sm font-semibold text-gray-900 shrink-0">
                     {plano.garantia_atendimento}
                   </span>
                 </div>
               )}
-              <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
-                <div className="flex items-center gap-1">
+              <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-lg bg-gray-50">
+                <div className="flex items-center gap-1 min-w-0">
                   <span className="text-sm text-gray-600">Penalidades</span>
                   <InfoTip text="Multas e advertências aplicadas pela ANS nos últimos 3 anos por descumprimento de normas (negativas de cobertura, atrasos, etc.)." />
                 </div>
-                <span className="text-sm font-semibold text-gray-900">
+                <span className="text-sm font-semibold text-gray-900 shrink-0">
                   {plano.qtd_penalidades > 0
                     ? `${plano.qtd_penalidades} (${formatCurrency(plano.total_multas)})`
                     : "Nenhuma"}
                 </span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
-                <div className="flex items-center gap-1">
+              <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-lg bg-gray-50">
+                <div className="flex items-center gap-1 min-w-0">
                   <span className="text-sm text-gray-600">Programas de Prevenção</span>
                   <InfoTip text="Programas de promoção da saúde e prevenção de doenças (PromoPrev) cadastrados pela operadora na ANS." />
                 </div>
-                <span className="text-sm font-semibold text-gray-900">
+                <span className="text-sm font-semibold text-gray-900 shrink-0">
                   {plano.qtd_programas_prevencao > 0
                     ? `${plano.qtd_programas_prevencao} programa${plano.qtd_programas_prevencao !== 1 ? "s" : ""}`
                     : "Nenhum"}
@@ -678,15 +678,15 @@ export default function PlanoDetalhe() {
           {/* IDSS sub-index breakdown */}
           {plano.idss_detalhes && (
             <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h2 className="text-lg font-bold text-gray-900 mb-1 flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-indigo-600" />
+              <h2 className="text-lg font-bold text-gray-900 mb-1 flex items-center flex-wrap gap-2">
+                <TrendingUp className="h-5 w-5 text-indigo-600 shrink-0" />
                 IDSS — Detalhamento
                 <InfoTip text="Índice de Desempenho da Saúde Suplementar, decomposto em 4 dimensões. Cada sub-índice vai de 0 a 1." />
               </h2>
               <p className="text-xs text-gray-500 mb-4">
                 Referência: {plano.idss_detalhes.ano}
               </p>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {[
                   { label: "IDSS Geral", value: plano.idss_detalhes.idss, tip: "Nota geral composta pelas 4 dimensões abaixo." },
                   { label: "IDQS — Qualidade", value: plano.idss_detalhes.idqs, tip: "Qualidade em atenção à saúde: taxas de internação, partos cesáreos, prevenção." },
@@ -718,8 +718,8 @@ export default function PlanoDetalhe() {
           {/* IGR complaint history */}
           {plano.igr_historico && plano.igr_historico.length > 0 && (
             <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h2 className="text-lg font-bold text-gray-900 mb-1 flex items-center gap-2">
-                <Phone className="h-5 w-5 text-orange-600" />
+              <h2 className="text-lg font-bold text-gray-900 mb-1 flex items-center flex-wrap gap-2">
+                <Phone className="h-5 w-5 text-orange-600 shrink-0" />
                 Histórico de Reclamações (IGR)
                 <InfoTip text="Evolução do Índice Geral de Reclamações ao longo dos últimos trimestres. Quanto menor o índice, menos reclamações a operadora recebe." />
               </h2>
@@ -760,8 +760,8 @@ export default function PlanoDetalhe() {
           {/* Reajuste history */}
           {plano.reajustes_historico && plano.reajustes_historico.length > 0 && (
             <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h2 className="text-lg font-bold text-gray-900 mb-1 flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-amber-600" />
+              <h2 className="text-lg font-bold text-gray-900 mb-1 flex items-center flex-wrap gap-2">
+                <DollarSign className="h-5 w-5 text-amber-600 shrink-0" />
                 Histórico de Reajustes
                 <InfoTip text="Percentuais de reajuste anual aplicados pela operadora nos últimos ciclos. O reajuste é o aumento autorizado pela ANS no valor da mensalidade." />
               </h2>

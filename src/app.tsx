@@ -61,7 +61,7 @@ export default function App() {
             </Link>
 
             {/* Desktop nav links */}
-            <div className="hidden md:flex items-center gap-1">
+            <div className="hidden lg:flex items-center gap-1">
               {NAV_LINKS.map((link) => {
                 const Icon = link.icon;
                 const isActive = location.pathname.startsWith(link.to);
@@ -99,7 +99,7 @@ export default function App() {
             {/* Mobile menu button */}
             <button
               type="button"
-              className="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100"
+              className="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100"
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Abrir menu"
             >
@@ -114,7 +114,7 @@ export default function App() {
 
         {/* Mobile menu */}
         {mobileOpen && (
-          <div className="md:hidden fixed inset-0 top-16 z-40">
+          <div className="lg:hidden fixed inset-0 top-16 z-40">
             <div
               className="absolute inset-0 bg-black/20"
               onClick={() => setMobileOpen(false)}

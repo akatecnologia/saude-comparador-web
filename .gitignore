@@ -7,3 +7,5 @@ dist
 !.env.example
 .DS_Store
 *.local
+test-results/
+playwright-report/
